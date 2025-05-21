@@ -111,7 +111,8 @@ Assumptions about the random variables $X_i$:
 \begin{frame}
 \frametitle{Relaxing the Classical Framework assumptions}
 \begin{itemize}
-    \item Portfolio of $n$ \al{heterogeneous} risks: $\boldsymbol{X} = (X_v)_{v=1}^{n}$ with $X_v = \sum_{i=1}^{N_v} B_{v,i}$.
+    \item Portfolio of $n$ \al{heterogeneous} risks: $\boldsymbol{X} = (X_v)_{v=1}^{n}$.
+    % with $X_v = \sum_{i=1}^{N_v} B_{v,i}$.
 
     \vfill
 
@@ -131,49 +132,54 @@ Assumptions about the random variables $X_i$:
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Multivariate Poisson Modeling with Poisson Marginals}
-\begin{itemize}
-        \item Copula-based methods:
-        \begin{itemize}
-            \item[+] Allow \alg[1-2]{separate modeling of marginals and dependence}
-            \item Often avoided in discrete contexts due to theoretical and computational challenges\\
-            \citep{genest2007primer, henn2022limitations}
-        \end{itemize}
+%% Mentionner a voix haute sera mieux je pense. 
+% \begin{frame}
+% \frametitle{Multivariate Poisson Modeling with Poisson Marginals}
+% \begin{itemize}
+%         \item Copula-based methods:
+%         \begin{itemize}
+%             \item[+] Allow \alg[1-2]{separate modeling of marginals and dependence}
+%             \item Often avoided in discrete contexts due to theoretical and computational challenges\\
+%             \citep{genest2007primer, henn2022limitations}
+%         \end{itemize}
         
-        \vfill
-        \pause
-        \item Common-Shock Models (MPCS):
-        \begin{itemize}
-        \item[$\rightarrow$] One shock event can trigger claims across multiple risks
-        \item[+] Provide \alg[2]{clear interpretation of dependence} mechanisms
-            % \item 
-            \item Parameter count grows exponentially with dimension
-            \item Becomes computationally intractable for large portfolios\\
-            \tiny \citep{karlis2003algorithm, ccekyay2023computing}
-        \end{itemize}
-        \vfill 
-        \item[$\Rightarrow$]  \cite{cote2025tree}: a tractable, interpretable framework based on tree-structured Markov random fields with Poisson marginals.
-\end{itemize}
-\end{frame} 
+%         \vfill
+%         \pause
+%         \item Common-Shock Models (MPCS):
+%         \begin{itemize}
+%         \item[$\rightarrow$] One shock event can trigger claims across multiple risks
+%         \item[+] Provide \alg[2]{clear interpretation of dependence} mechanisms
+%             % \item 
+%             \item Parameter count grows exponentially with dimension
+%             \item Becomes computationally intractable for large portfolios\\
+%             \tiny \citep{karlis2003algorithm, ccekyay2023computing}
+%         \end{itemize}
+%         \vfill 
+%         \item[$\Rightarrow$]  \cite{cote2025tree}: a tractable, interpretable framework based on tree-structured Markov random fields with Poisson marginals.
+% \end{itemize}
+% \end{frame} 
 
 \section{Tree-structured Markov Random Field with Poisson marginal}
-\begin{frame}{Tree-Structured Graphs}
+\begin{frame}{Notation: Tree-Structured Graphs}
 \begin{columns}
     \begin{column}{0.6\textwidth}
-        \textbf{Tree Definition:}
+        % \textbf{Tree Definition:}
         \begin{itemize}
             \item A tree $\mathcal{T}=(\mathcal{V},\mathcal{E})$ is a graph where:
             \begin{itemize}
                 \item $\mathcal{V}=\{1,\ldots,d\}$ is the set of vertices;
-            \item $\mathcal{E} \subseteq \{\{u,v\} : u,v \in \mathcal{V}, u \neq v\}$ is the set of edges
+            \item $\mathcal{E} \subseteq \{\{u,v\} : u,v \in \mathcal{V}, u \neq v\}$ is the set of undirected edges;
             \item \al{No cycle} or loop exist.
             \end{itemize}
+            \pause
+            \item $\mathrm{path}(u, v)$: set of edges connecting vertex $u$ to vertex $v$, $u,v \in \mathcal{V}$.
+            \pause
             \item We designate one vertex as the \al{root} $r$.
             \item For each vertex $v$:
             \begin{itemize}
                 \item $\mathrm{pa}(v)$: parent of $v$;
                 \item $\mathrm{ch}(v)$: set of children of $v$.
+                \item $\mathrm{dsc}(v)$: set of descendants of $v$.
             \end{itemize}
         \end{itemize}
     \end{column}
@@ -181,7 +187,7 @@ Assumptions about the random variables $X_i$:
     \begin{column}{0.4\textwidth}
     \onslide*<1>{\resizebox{0.8\textwidth}{!}{\input{Figures/cayley-4-5}}
     
-    \centering \hspace{-1cm} Tree
+    \centering \hspace{-1cm} Tree $\mathcal{T}_{\bullet}$
     }
     \onslide*<2>{\resizebox{0.8\textwidth}{!}{\input{Figures/notree}}
     
@@ -195,7 +201,7 @@ Assumptions about the random variables $X_i$:
 \begin{frame}
 \frametitle{Tree-structured Markov Random Fields (MRFs)}
 \begin{block}{Definition: Markov Random Field on a Tree}
-    A vector of random variables $\boldsymbol{N}=\{N_v, \, v \in \mathcal{V}\}$ defined on tree $\mathcal{T} = (\mathcal{V},\mathcal{E})$, is a MRF if it satisfies the 
+    A vector of random variables $\boldsymbol{N}= (N_v, \, v \in \mathcal{V})$ defined on tree $\mathcal{T} = (\mathcal{V},\mathcal{E})$, is a MRF if it satisfies the 
     \textbf{global Markov property}:
 \end{block}
 
@@ -235,14 +241,14 @@ Tree-structured MRFs with Poisson marginals \citep{cote2025tree}
 \begin{frame}{Flexible Tree-structured MRFs with Poisson marginals}
     % Let
     \begin{itemize}
-            \item Tree $\mathcal{T} = (\mathcal{V}, \mathcal{E})$ adn fix a root $r \in \mathcal{V}$;
+            \item Tree $\mathcal{T} = (\mathcal{V}, \mathcal{E})$;
             \item Parameters: means $\boldsymbol{\lambda} = (\lambda_v)_{v \in \mathcal{V}}$ and dependencies $\boldsymbol{\alpha} = (\alpha_e)_{e \in \mathcal{E}}$;
             \item Constraint: $\alphav{v} \in [0, \min(\sqrt{{\lambda_{v}}/{\lambda_{\pa{v}}}}, \sqrt{{\lambda_{\pa{v}}}/{\lambda_{v}}})]$;
          \item  "$\circ$" is the binomial thinning operator: $(\alpha\circ N) \sim$ Binomial$(N,\alpha)$.
     \end{itemize}
     \pause
 \begin{theorem}
-Let $\boldsymbol{N}$ have the following recursive construction:
+For a given root $r \in \mathcal{V}$, let $\boldsymbol{N}$ have the following recursive construction:
         \begin{equation*}
         N_v = 
         \begin{cases}
@@ -317,34 +323,178 @@ Let $\boldsymbol{N} = (N_1,\dots, N_7) \sim \text{MPMRF}(\boldsymbol{\lambda}, \
      \vspace{-0.3cm}
      \begin{itemize}
          \item  "$\circ$" is the binomial thinning operator: $(\alpha\circ N) \sim$ Binomial$(N,\alpha)$;
-         \item $\lambda_{L_v} = \lambda_v - \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}$
+         \item $\lambda_{L_v} = \lambda_v - \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}$.
      \end{itemize}         
 
         \end{example}
 \end{frame}
 
-\begin{frame}{Basic properties}
+% \begin{frame}{An efficient subfamily of the multivariate Poisson distribution based on common shocks}
+% Let \begin{itemize}
+%     \item $\boldsymbol{N} \sim \text{MPMRF}(\boldsymbol{\lambda}, \boldsymbol{\alpha}, \mathcal{T})$ as in Theorem 1.
+%     \item $\Theta_v$ be the set of all connected subsets of the tree $\mathcal{T}$ to $v$
+% \end{itemize}
+% \begin{theorem}
+% $\boldsymbol{N}$ admits a common-shock representation:
+%     \begin{equation*}
+%     N_v = \sum_{\mathcal{W} \in \Theta_v} Y_{\mathcal{W}}, \quad v \in \mathcal{V},
+%     \end{equation*}
+%     % where $\mathcal{W}$ ranges over all , 
+%     where $Y_{\mathcal{W}} \sim \text{Poisson}(\gamma_{\mathcal{W}})$ are independent and
+%     {\color{DarkGray} 
+%     \begin{equation*}
+%      \gamma_{\mathcal{W}} = \left( \prod_{w\in \mathcal{W}} \lambda_w \right)\left(\prod_{(u,w)\in\mathcal{E}_{\mathcal{W}}} \frac{\alpha_{(u,w)}}{\sqrt{\lambda_u\lambda_v}}\right)\left(\prod_{(i,j)\in\mathcal{E}^{\dagger}_{\mathcal{W}}} \left(1-\alpha_{(i,j)}\sqrt{\frac{\lambda_j}{\lambda_i}}\right)\right), 
+%      % \quad \mathcal{W}\in \bigcup_{v\in\mathcal{V}}\Theta_v,
+%      \end{equation*}
+%      with $\mathcal{E}_{\mathcal{W}} = \{(i,j)\in\mathcal{E} : i,j\in \mathcal{W}\}$ and $\mathcal{E}_{\mathcal{W}}^{\dagger} = \{(i,j)\in\mathcal{E} : i\in \mathcal{W}, j\not\in \mathcal{W}\}$.
+%      }
+% \end{theorem}
+\begin{frame}{An Efficient Subfamily of Multivariate Poisson Based on Common Shocks}
+\begin{theorem}
+Let $\boldsymbol{N} \sim \text{MPMRF}(\boldsymbol{\lambda}, \boldsymbol{\alpha}, \mathcal{T})$. Then $\boldsymbol{N}$ admits a common-shock representation:
+    \begin{equation*}
+    N_v = \sum_{\mathcal{W} \in \Theta_v} Y_{\mathcal{W}}, \quad v \in \mathcal{V},
+    \end{equation*}
+    where:
+    \begin{itemize}
+        \item $\Theta_v$ is the set of all connected subsets of tree $\mathcal{T}$ containing vertex $v$;
+        \item $Y_{\mathcal{W}} \sim \text{Poisson}(\gamma_{\mathcal{W}}), \mathcal{W} \in \Theta_v$ are independent random variables;
+        \item $\gamma_{\mathcal{W}}$ are parameters derived from $\boldsymbol{\lambda}$ and $\boldsymbol{\alpha}$.
+    \end{itemize}
+\end{theorem}
+
+\vspace{0.3cm}
 \begin{itemize}
-    \item PMF
-    \item PGF
-\end{itemize}
-\begin{itemize}
-    \item Advantages of the constructions and use 
+    \item Result: The MPMRF family ($\mathbb{MRMRF})$ is an \al{efficient subfamily} of the multivariate Poisson common shock family ($\mathbb{MPCS}$). 
+    % \item \alg{Advantages}: Linear parameter growth ($2d-1$ vs $2^d$) while maintaining flexibility
+    % \item \alg{Key insight}: Tree structure enables efficient representation of complex dependencies
 \end{itemize}
 \end{frame}
+\begin{frame}{An Efficient Subfamily : An Example}
+\begin{minipage}{0.69\textwidth}
+    \begin{itemize}
+    \item A $d=7$ multivariate distribution in $\mathbb{MPCS}$  requires $2^7 = 128$ parameters.
+    \pause
+    \vfill
+    \item A MPMRF on $\mathcal{T}$ (in MPCS representation) requires $|\cup \Theta_v| + d = 46$ 
+    % requires $f(v) = \prod_{u \in \mathrm{ch}(v)} \left(1 + f(u)\right) = 39$ 
+    parameters.
+    \pause
+    \vfill
+    \item The MPMRF stochastic representation requires $2d - 1 + d  = \al{20}$ \al{parameters}
+    % \item MPMRF models are a subfamily of multivariate Poisson distributions with common shocks, with tree-structured shock subsets.
+   
+    % \item However:
+    % \begin{itemize}
+    %     \item Still requires up to $|\bigcup \Theta_v| = \mathcal{O}(2^d)$ shocks in general;
+    %     \item Dependence and marginals become entangled in the $\gamma_{\mathcal{W}}$ parameters;
+    %     \item Breaks the separability property of MPMRFs.
+    % \end{itemize}
+    
+    % \item MPMRFs allow complex dependence with only $2d - 1$ parameters, while remaining computationally tractable.
+\end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}{0.30\textwidth}
+\centering
+\vfill
+\begin{tikzpicture}[xscale = 1, yscale = 1, very thick]
+    \tikzstyle{vertex}=[circle, draw = black,fill=white,minimum size=14pt,inner sep=0pt]
+    
+    \foreach \name/\x/\y in {1/0/3, 2/-0.5/2, 3/0.5/2, 4/0/1, 5/1/1, 6/-0.5/0, 7/0.5/0}
+    \node[vertex] (G-\name) at (\x,\y) {\name};
+    
+    \foreach \from/\to in {1/2, 1/3, 3/4, 3/5, 4/6, 4/7}
+    \draw (G-\from) -- (G-\to);
+\end{tikzpicture}
+% \vspace{1cm}
 
-\begin{frame}{A subfamily of the multivariate Poisson distribution based on common shocks}
-Show that it is a better alternative to the common shock model 
+\hspace{-0.6cm} Tree $\mathcal{T}$
+\vfill
+\end{minipage}
+\vfill
+\pause
+Conclusion : 
+\begin{itemize}
+    % \item     \vspace{1cm}
+    \item \al{MPMRF scales as $\mathcal{O}(d)$} unlike the exponential cost of MPCS models.
+    \item MPMRF retains \al{rich and tractable dependence} via tree structures.
+    \item The recursive construction allows for \al{efficient computations}.
+    % \item[$\Rightarrow$] 
+\end{itemize}
 \end{frame}
+% \pause
+% \vfill
+% \begin{itemize}
+    % \item MPMRF models are a subfamily of multivariate Poisson distributions with common shocks, with tree-structured shock subsets.
+   
+    % \item However:
+    % \begin{itemize}
+    %     \item Still requires up to $|\bigcup \Theta_v| = \mathcal{O}(2^d)$ shocks in general;
+    %     \item Dependence and marginals become entangled in the $\gamma_{\mathcal{W}}$ parameters;
+    %     \item Breaks the separability property of MPMRFs.
+    % \end{itemize}
+    
+    % \item MPMRFs allow complex dependence with only $2d - 1$ parameters, while remaining computationally tractable.
+% \end{itemize}
+% \end{frame}
 
-
-\begin{frame}{Risk model under the framework}
+\section{Risk models with tree-structured MPMRF frequency distributions}
+\begin{frame}{Risk model under the MPMRF framework}
 Show the risk model and the aggregate random variable setup
 \end{frame}
 
+\begin{frame}{MPMRF: Structure and Application to Aggregate Risk}
+
+\begin{itemize}
+    \item \textbf{MPMRF model:} A multivariate count vector $\boldsymbol{N} = (N_v)_{v \in \mathcal{V}}$ with:
+    \begin{itemize}
+        \item Poisson marginals: $N_v \sim \text{Poisson}(\lambda_v)$
+        \item Markov structure on a tree $\mathcal{T}$: dependencies satisfy conditional independencies of the tree
+        \item Explicit joint pmf and pgf derived from the thinning construction
+    \end{itemize}
+    
+    \pause
+    
+    \item \textbf{Aggregate loss:} Define $S = \sum_{v \in \mathcal{V}} X_v$, with
+    \[
+    X_v = \sum_{i=1}^{N_v} B_{v,i}, \quad B_{v,i} \sim \text{i.i.d. severity}
+    \]
+    \begin{itemize}
+        \item Given joint pgf of $\boldsymbol{N}$ and marginal pgfs of severities, one can derive the pgf of $S$
+        \item Enables exact computation of the distribution of $S$ – no simulation required
+    \end{itemize}
+    
+    \pause
+    
+    \item \textbf{Risk measures:} The full distribution of $S$ allows fast and accurate evaluation of:
+    \begin{itemize}
+        \item $\mathbb{P}(S > s)$ — tail probabilities
+        \item Value-at-Risk (VaR), Tail Value-at-Risk (TVaR)
+    \end{itemize}
+    
+\end{itemize}
+
+\vspace{0.8em}
+\textbf{Example (7 risks):}  
+\vspace{0.3em}
+
+{\scriptsize
+\begin{tabular}{lcl}
+$\lambda_v = 2$ for all $v$ & $\quad$ & Tree: as in previous slide \\
+$B_{v,i} \sim \text{Exp}(1)$ & & PGF of $S$: computed exactly in 2.1 seconds \\
+$S = \sum_{v=1}^{7} X_v$ & & TVaR$_{0.99}(S)$ = 23.61, VaR$_{0.99}(S)$ = 21
+\end{tabular}
+}
+
+\vspace{0.3em}
+{\footnotesize
+$\Rightarrow$ MPMRF enables exact, scalable aggregate risk computation in seconds.
+}
+
+\end{frame}
 
 \begin{frame}{Risk Sharing: Definition and Optimal Rule}
-
     \begin{itemize}
         \item \al{Fair risk sharing rule:} a function $h: \boldsymbol{X} \mapsto (h_{i,n}(S_n))_{i \in [n]}$ that allocates the total cost $S_n = \sum_{i=1}^n X_i$ among $n$ participants such that:
         \begin{equation*}
@@ -363,7 +513,7 @@ Show the risk model and the aggregate random variable setup
         \end{equation*}
         over all measurable functions $h(S_n)$.
     \end{itemize}
-    \end{frame}
+\end{frame}
 
 \begin{frame}{Numerical Illustrations}
     s
