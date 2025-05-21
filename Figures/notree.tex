@@ -1,0 +1,85 @@
+\begin{tikzpicture}[
+  grow cyclic, 
+  level distance=0.8cm, 
+  level 1/.style={sibling angle=120, nodes={circle, draw, thick}},
+  level 2/.style={sibling angle=70, nodes={circle, draw, thick}},
+  level 3/.style={sibling angle=55, nodes={circle, draw, thick}},
+  level 4/.style={sibling angle=45, nodes={circle, draw, thick}},
+  level 5/.style={sibling angle=15, nodes={draw =none, font = \footnotesize, transform shape}},
+  edge from parent/.style={draw, thick},
+  edge from parent path={(\tikzparentnode) -- (\tikzchildnode)},
+  scale = 0.6
+]
+
+\node (1) [circle, draw, thick, fill = black] {} % racine node
+  child {node (A) {} % niveau 2
+    child {node {} % niveau 3
+      child {node {} % niveau 4
+        child {node {}} % niveau 5
+        child {node {}} % niveau 5
+      }
+      child {node {} % niveau 4
+        % child {node {}} % niveau 5 
+        % child {node {}} % niveau 5
+      }
+    }
+    child {node {} % niveau 3
+      child {node {} % niveau 4
+        child {node {}} % niveau 5
+        child {node {}}  % niveau 5
+      }
+      child {node (C) {}  % niveau 4
+        % child {node {}} % niveau 5
+        % child {node {}} % niveau 5
+      }
+    }
+  }
+  child {node (B) {} % niveau 2
+    child {node {} % niveau 3
+      child {node {} % niveau 4
+        child {node {}} % niveau 5
+        child {node {}} % niveau 5
+      }
+      child {node {} % niveau 4
+        % child {node {}} % niveau 5 
+        % child {node {}} % niveau 5
+      }
+    }
+    child {node {} % niveau 3
+      child {node  {} % niveau 4
+        child {node {}} % niveau 5
+        child {node {}}  % niveau 5
+      }
+      child {node (D) {}  % niveau 4
+        % child {node {}} % niveau 5
+        % child {node {}} % niveau 5
+      }
+    }
+  }
+  child {node  {} % niveau 2
+    child {node {} % niveau 3
+      child {node {} % niveau 4
+        % child {node {}} % niveau 5
+        % child {node {}} % niveau 5
+      }
+      child {node {} % niveau 4
+        child {node {}} % niveau 5 
+        child {node {}} % niveau 5
+      }
+    }
+    child {node {} % niveau 3
+      child {node {} % niveau 4
+        child {node {}
+        } % niveau 5
+        child {node {}}  % niveau 5
+      }
+      child {node {}  % niveau 4
+        % child {node {}} % niveau 5
+        % child {node {}} % niveau 5
+      }
+    }
+  };
+% Add an extra edge to create a cycle (making it not a tree)
+\draw[red, thick, line width = 2pt] (B) to[] (C);
+
+\end{tikzpicture}

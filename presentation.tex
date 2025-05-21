@@ -31,46 +31,60 @@
 \frame{\titlepage}
 
 \section{Introduction}
-\begin{frame}{Two Major Insurance Systems}
-\begin{minipage}[t]{0.45\textwidth}
-{\large Traditional Insurance}:
-\begin{itemize}
-    \item Centralized risk-sharing mechanism;
-    \item Insurer = intermediary;
-    \item Standardized contracts $\Rightarrow$ portfolio expansion.
-    % \item  Focus on predictability and accessibility
-\end{itemize}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.45\textwidth}
-{\large Decentralized Insurance}\\
-\citep{feng2024unified}:
-\begin{itemize}
-    \item Removal of a central intermediary;
-    \item Reform of mutualization principles;
-    \item Use of modern technologies.
-\end{itemize}
-\end{minipage}
-\pause
+% \begin{frame}{Two Major Insurance Systems}
+% \begin{minipage}[t]{0.45\textwidth}
+% {\large Traditional Insurance}:
+% \begin{itemize}
+%     \item Centralized risk-sharing mechanism;
+%     \item Insurer = intermediary;
+%     \item Standardized contracts $\Rightarrow$ portfolio expansion.
+%     % \item  Focus on predictability and accessibility
+% \end{itemize}
+% \end{minipage}
+% \hfill
+% \begin{minipage}[t]{0.45\textwidth}
+% {\large Decentralized Insurance}\\
+% \citep{feng2024unified}:
+% \begin{itemize}
+%     \item Removal of a central intermediary;
+%     \item Reform of mutualization principles;
+%     \item Use of modern technologies.
+% \end{itemize}
+% \end{minipage}
+% \pause
 
-\vspace{5pt}
+% \vspace{5pt}
 
-{\large Common point: }
+% {\large Common point: }
+% \begin{itemize}
+%     \item Based on risk pooling;
+%     \item One of the objectives: \\
+%     $\downarrow$ individual contributions through \al{risk sharing}.
+% \end{itemize}
+% \end{frame}
+\begin{frame}{Dependent Risks in insurance}
 \begin{itemize}
-    \item Based on risk pooling;
-    \item One of the objectives: \\
-    $\downarrow$ individual contributions through \al{risk sharing}.
+    \item Insurance portfolios often contain multiple risks affected by shared causes (e.g., floods, wildfires, cyber attacks).
+    
+    \item These shared causes induce dependence in claim occurrences.
+    
+    \item Accurately modeling this dependence is critical for:
+    \begin{itemize}
+        \item Portfolio-level risk assessment;
+        \item Fair capital allocation among participants;
+        \item Regulatory solvency metrics.
+    \end{itemize}
+    
+    \item We aim to build flexible and tractable risk models for \al{dependent count data} with actuarial relevance.
 \end{itemize}
 \end{frame}
-
-
 
 \begin{frame}[label=toc]{Overview}
     \setlength{\leftskip}{5cm}%
     \tableofcontents[subsectionstyle=hide]
 \end{frame}
 
-\section{Individual Risk Models and Risk Sharing}
+\section{Individual Risk Models}
 \begin{frame}{Individual Risk Model - Classical Framework}
 Definition: 
 \begin{itemize}
@@ -92,7 +106,6 @@ Assumptions about the random variables $X_i$:
     \item independent. 
 \end{itemize}
 \end{frame}
-
 
 \section{Compound Poisson Distribution individual risk models}
 \begin{frame}
@@ -137,11 +150,48 @@ Assumptions about the random variables $X_i$:
             % \item 
             \item Parameter count grows exponentially with dimension
             \item Becomes computationally intractable for large portfolios\\
-            \citep{karlis2003algorithm, ccekyay2023computing}
+            \tiny \citep{karlis2003algorithm, ccekyay2023computing}
         \end{itemize}
+        \vfill 
+        \item[$\Rightarrow$]  \cite{cote2025tree}: a tractable, interpretable framework based on tree-structured Markov random fields with Poisson marginals.
 \end{itemize}
 \end{frame} 
 
+\section{Tree-structured Markov Random Field with Poisson marginal}
+\begin{frame}{Tree-Structured Graphs}
+\begin{columns}
+    \begin{column}{0.6\textwidth}
+        \textbf{Tree Definition:}
+        \begin{itemize}
+            \item A tree $\mathcal{T}=(\mathcal{V},\mathcal{E})$ is a graph where:
+            \begin{itemize}
+                \item $\mathcal{V}=\{1,\ldots,d\}$ is the set of vertices;
+            \item $\mathcal{E} \subseteq \{\{u,v\} : u,v \in \mathcal{V}, u \neq v\}$ is the set of edges
+            \item \al{No cycle} or loop exist.
+            \end{itemize}
+            \item We designate one vertex as the \al{root} $r$.
+            \item For each vertex $v$:
+            \begin{itemize}
+                \item $\mathrm{pa}(v)$: parent of $v$;
+                \item $\mathrm{ch}(v)$: set of children of $v$.
+            \end{itemize}
+        \end{itemize}
+    \end{column}
+    % \pause
+    \begin{column}{0.4\textwidth}
+    \onslide*<1>{\resizebox{0.8\textwidth}{!}{\input{Figures/cayley-4-5}}
+    
+    \centering \hspace{-1cm} Tree
+    }
+    \onslide*<2>{\resizebox{0.8\textwidth}{!}{\input{Figures/notree}}
+    
+    \centering
+    
+    \hspace{-1cm} Not a tree
+    }
+    \end{column}
+\end{columns}
+\end{frame}
 \begin{frame}
 \frametitle{Tree-structured Markov Random Fields (MRFs)}
 \begin{block}{Definition: Markov Random Field on a Tree}
@@ -153,7 +203,7 @@ Assumptions about the random variables $X_i$:
 \begin{tikzpicture}[overlay, remember picture]
 \node[anchor=west] at ([xshift=-6cm, yshift=-0.5cm]current page.center) (markov) {Two random variables are conditionally independent,};
 \node[anchor=west] at ([xshift=-6cm, yshift=-1cm]current page.center) (markov2) {given the value of any random variable on the path between them.};
-\draw[->, thick, >=stealth] ([xshift=-2cm, yshift=-3.3cm]current page.north)  to[out=220, in=180]([xshift=-4cm]markov.north)  node[] {};
+\draw[->, thick, >=stealth, line width = 1.5pt] ([xshift=-2cm, yshift=-3.3cm]current page.north)  to[out=220, in=180]([xshift=-4cm]markov.north)  node[] {};
 \end{tikzpicture}
 }
 
@@ -183,12 +233,14 @@ Tree-structured MRFs with Poisson marginals \citep{cote2025tree}
 \end{itemize}
 \end{frame}
 \begin{frame}{Flexible Tree-structured MRFs with Poisson marginals}
-    Let
+    % Let
     \begin{itemize}
-            \item Tree $\mathcal{T} = (\mathcal{V}, \mathcal{E})$ with root $r \in \mathcal{V}$;
+            \item Tree $\mathcal{T} = (\mathcal{V}, \mathcal{E})$ adn fix a root $r \in \mathcal{V}$;
             \item Parameters: means $\boldsymbol{\lambda} = (\lambda_v)_{v \in \mathcal{V}}$ and dependencies $\boldsymbol{\alpha} = (\alpha_e)_{e \in \mathcal{E}}$;
-            \item Constraint: $\alphav{v} \in [0, \min(\sqrt{{\lambda_{v}}/{\lambda_{\pa{v}}}}, \sqrt{{\lambda_{\pa{v}}}/{\lambda_{v}}})]$.
+            \item Constraint: $\alphav{v} \in [0, \min(\sqrt{{\lambda_{v}}/{\lambda_{\pa{v}}}}, \sqrt{{\lambda_{\pa{v}}}/{\lambda_{v}}})]$;
+         \item  "$\circ$" is the binomial thinning operator: $(\alpha\circ N) \sim$ Binomial$(N,\alpha)$.
     \end{itemize}
+    \pause
 \begin{theorem}
 Let $\boldsymbol{N}$ have the following recursive construction:
         \begin{equation*}
@@ -197,6 +249,7 @@ Let $\boldsymbol{N}$ have the following recursive construction:
         L_r, & \text{if } v = r, \\ 
         \alpha_v \sqrt{\dfrac{\lambda_v}{\lambda_{\pa{v}}}} \circ N_{\pa{v}} + L_v, & \text{otherwise},
         \end{cases}
+        \vspace{-0.1cm}
         \end{equation*}
         where $\boldsymbol{L} = (L_v)_{v\in\mathcal{V}}$ are independent Poisson variables with $\lambda_{L_v} = \lambda_v- \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}$.
         
@@ -208,10 +261,10 @@ Let $\boldsymbol{N}$ have the following recursive construction:
 
 
 \begin{frame}
-        \frametitle{Tree-based MRF with Poisson marginal distributions}
-        \footnotesize
+\frametitle{Understanding the stochastic construction}
+Let $\boldsymbol{N} = (N_1,\dots, N_7) \sim \text{MPMRF}(\boldsymbol{\lambda}, \boldsymbol{\alpha}, \mathcal{T})$ as in Theorem 1.    
         \begin{example}
-            Consider $\boldsymbol{N} = (N_1,\dots, N_7)$  defined on the tree $\mathcal{T}$ depicted below. 
+            % Consider $\boldsymbol{N} = (N_1,\dots, N_7)$  defined on the tree $\mathcal{T}$ depicted below. 
         \begin{figure}[H] 
             \centering
             \begin{minipage}[b]{0.30\textwidth}
@@ -249,20 +302,45 @@ Let $\boldsymbol{N}$ have the following recursive construction:
             \begin{minipage}[b]{0.69 \textwidth}
                 Stochastic construction, root = 1
                 \medskip\\
-                \onslide<2->{$N_1 = L_1,\phantom{+\;\alpha_{(v,2)}\circ N_1}\quad L_1\sim$ Poisson$(\lambda)$}\\
-                \onslide<3->{$N_2 = \alpha_{(1,2)}\circ N_1 + L_2,\quad L_2\sim$ Poisson$(\lambda(1-\alpha_{(1,2)}))$}\\
-                \onslide<4->{$N_3 = \alpha_{(1,3)}\circ N_1 + L_3,\quad L_3\sim$ Poisson$(\lambda(1-\alpha_{(1,3)}))$}\\
-                \onslide<6->{$N_4 = \alpha_{(3,4)}\circ N_3 + L_4,\quad L_4\sim$ Poisson$(\lambda(1-\alpha_{(3,4)}))$}\\
-                \onslide<7->{$N_5 = \alpha_{(3,5)}\circ N_3 + L_5,\quad L_5\sim$ Poisson$(\lambda(1-\alpha_{(3,5)}))$}\\
-                \onslide<9->{$N_6 = \alpha_{(4,6)}\circ N_4 + L_6,\quad L_6\sim$ Poisson$(\lambda(1-\alpha_{(4,6)}))$}\\
-                 \onslide<10->{$N_7 = \alpha_{(4,7)}\circ N_4 + L_7,\quad L_7\sim$ Poisson$(\lambda(1-\alpha_{(4,7)}))$}
+                \onslide<2->{$N_1 = L_1,\phantom{+\;\alpha_{(v,2)}\circ N_1}\quad L_1\sim$ Poisson$(\lambda_{L_1})$}\\
+                \onslide<3->{$N_2 = \alpha_{(1,2)}\circ N_1 + L_2,\quad L_2\sim$ Poisson$(\lambda_{L_2})$}\\
+                \onslide<4->{$N_3 = \alpha_{(1,3)}\circ N_1 + L_3,\quad L_3\sim$ Poisson$(\lambda_{L_3})$}\\
+                \onslide<6->{$N_4 = \alpha_{(3,4)}\circ N_3 + L_4,\quad L_4\sim$ Poisson$(\lambda_{L_4})$}\\
+                \onslide<7->{$N_5 = \alpha_{(3,5)}\circ N_3 + L_5,\quad L_5\sim$ Poisson$(\lambda_{L_5})$}\\
+                \onslide<9->{$N_6 = \alpha_{(4,6)}\circ N_4 + L_6,\quad L_6\sim$ Poisson$(\lambda_{L_6})$}\\
+                \onslide<10->{$N_7 = \alpha_{(4,7)}\circ N_4 + L_7,\quad L_7\sim$ Poisson$(\lambda_{L_7})$}
             \end{minipage}
         \end{figure}
-     where "$\circ$" is the binomial thinning operator: $(\alpha\circ N) \sim$ Binomial$(N,\alpha)$
-            %\caption{$\mathcal{T}$, with $\mathcal{V} = \{1,\dots,5\}$     and $\mathcal{E} = \{(1,2), (1,3), (3,4), (3,5)\}$}
-            %\label{fig:GrapheChaineMarkov}
+     \vspace{-0.3cm}
+        
+     where 
+     \vspace{-0.3cm}
+     \begin{itemize}
+         \item  "$\circ$" is the binomial thinning operator: $(\alpha\circ N) \sim$ Binomial$(N,\alpha)$;
+         \item $\lambda_{L_v} = \lambda_v - \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}$
+     \end{itemize}         
+
         \end{example}
-    \end{frame}
+\end{frame}
+
+\begin{frame}{Basic properties}
+\begin{itemize}
+    \item PMF
+    \item PGF
+\end{itemize}
+\begin{itemize}
+    \item Advantages of the constructions and use 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A subfamily of the multivariate Poisson distribution based on common shocks}
+Show that it is a better alternative to the common shock model 
+\end{frame}
+
+
+\begin{frame}{Risk model under the framework}
+Show the risk model and the aggregate random variable setup
+\end{frame}
 
 
 \begin{frame}{Risk Sharing: Definition and Optimal Rule}
@@ -287,28 +365,13 @@ Let $\boldsymbol{N}$ have the following recursive construction:
     \end{itemize}
     \end{frame}
 
+\begin{frame}{Numerical Illustrations}
+    s
+\end{frame}
 
-\begin{frame}
-    \frametitle{Individual Risk Models}
-    Lorem ipsum dolor sit amet:
-    \begin{itemize}
-    \item Here is a basic alert: \al{important text}
-    \item Here is a basic alert on the second click: \al[2]{important text}
-    \item Here is a positive alert on the third click: \alg[3]{important text}
-    \item Here are various alerts to flag the sign of numbers:
-    \begin{itemize}
-    \item Positive number: \alg{+5}
-    \item Negative number: \alr{-10}
-    \item Zero number: \alb{0.0}
-    \end{itemize}
-    \item Here are the same alerts on the second and third clicks:
-    \begin{itemize}
-    \item Positive number: \alg[2-3]{+5}
-    \item Negative number: \alr[2]{-10}
-    \item Zero number: \alb[3]{0.0}
-    \end{itemize}
-    \end{itemize}
-    \end{frame}
+\begin{frame}{Suite}
+    
+\end{frame}
 
 \appendix
 
