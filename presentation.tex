@@ -89,32 +89,10 @@ Definition:
 Assumptions about the random variables $X_i$: 
 \begin{itemize}
     \item identically distributed (homogeneous portfolio);
-    \item independent.
+    \item independent. 
 \end{itemize}
 \end{frame}
 
-
-\begin{frame}{Risk Sharing: Definition and Optimal Rule}
-
-    \begin{itemize}
-        \item \al{Fair risk sharing rule:} a function $h: \boldsymbol{X} \mapsto (h_{i,n}(S_n))_{i \in [n]}$ that allocates the total cost $S_n = \sum_{i=1}^n X_i$ among $n$ participants such that:
-        \begin{equation*}
-        \sum_{i=1}^n h_{i,n}(S_n) = S_n
-        \quad \text{and} \quad
-        \mathbb{E}[h_{i,n}(S_n)] = \mathbb{E}[X_i] \quad \text{(fairness)}.
-        \end{equation*}
-        \pause
-        \item \al{Optimal rule:} the conditional expectation
-        \begin{equation*}
-        h_{i,n}^{\star}(S_n) = \mathbb{E}[X_i \mid S_n]
-        \end{equation*}
-        minimizes the mean squared error:
-        \begin{equation*}
-        \mathbb{E}\left[(X_i - h(S_n))^2\right],
-        \end{equation*}
-        over all measurable functions $h(S_n)$.
-    \end{itemize}
-    \end{frame}
 
 \section{Compound Poisson Distribution individual risk models}
 \begin{frame}
@@ -141,47 +119,78 @@ Assumptions about the random variables $X_i$:
 \end{frame}
 
 \begin{frame}
-\frametitle{Approaches to Multivariate Poisson Modeling}
+\frametitle{Multivariate Poisson Modeling with Poisson Marginals}
 \begin{itemize}
         \item Copula-based methods:
         \begin{itemize}
-            \item Allow {separate modeling of marginals and dependence}
-            \item Often avoided in discrete contexts due to theoretical and computational challenges 
-            % \citep{genest2007primer, henn2022limitations}
+            \item[+] Allow \alg[1-2]{separate modeling of marginals and dependence}
+            \item Often avoided in discrete contexts due to theoretical and computational challenges\\
+            \citep{genest2007primer, henn2022limitations}
         \end{itemize}
         
         \vfill
-
+        \pause
         \item Common-Shock Models (MPCS):
         \begin{itemize}
-            \item Provide clear stochastic interpretation of dependence mechanisms
-            \item One shock event can trigger claims across multiple risks
+        \item[$\rightarrow$] One shock event can trigger claims across multiple risks
+        \item[+] Provide \alg[2]{clear interpretation of dependence} mechanisms
+            % \item 
             \item Parameter count grows exponentially with dimension
-            \item Becomes computationally intractable for large portfolios 
-            % \citep{karlis2003algorithm, ccekyay2023computing}
+            \item Becomes computationally intractable for large portfolios\\
+            \citep{karlis2003algorithm, ccekyay2023computing}
         \end{itemize}
 \end{itemize}
 \end{frame} 
 
 \begin{frame}
-\frametitle{Tree-structured MRFs with Poisson marginals}
+\frametitle{Tree-structured Markov Random Fields (MRFs)}
+\begin{block}{Definition: Markov Random Field on a Tree}
+    A vector of random variables $\boldsymbol{N}=\{N_v, \, v \in \mathcal{V}\}$ defined on tree $\mathcal{T} = (\mathcal{V},\mathcal{E})$, is a MRF if it satisfies the 
+    \textbf{global Markov property}:
+\end{block}
+
+\onslide<2->{
+\begin{tikzpicture}[overlay, remember picture]
+\node[anchor=west] at ([xshift=-6cm, yshift=-0.5cm]current page.center) (markov) {Two random variables are conditionally independent,};
+\node[anchor=west] at ([xshift=-6cm, yshift=-1cm]current page.center) (markov2) {given the value of any random variable on the path between them.};
+\draw[->, thick, >=stealth] ([xshift=-2cm, yshift=-3.3cm]current page.north)  to[out=220, in=180]([xshift=-4cm]markov.north)  node[] {};
+\end{tikzpicture}
+}
+
+\vspace{2.5cm}
+\onslide<3->{
+\textbf{Key advantages:} Tree-structured MRFs enable efficient 
 \begin{itemize}
-    \item Heterogeneity: assumed in many works (see e.g. \cite{denuit2021risk});
-    \item Dependence: 
-    \al{Relaxing the independence assumption}: 
-    \begin{itemize}
-        \item 
-    \end{itemize}
+    \item algorithms for computation (\cite{wainwright2003tree});
+    \item structure learning \citep{bresler2020learning, nikolakakis2021predictive}.
 \end{itemize}
+}
 \end{frame}
 
-\begin{frame}{Tree-structured MRFs with Poisson marginals}
+\begin{frame}{A Balanced Solution to Multivariate Poisson Modeling with Poisson Marginals}
+Tree-structured MRFs with Poisson marginals \citep{cote2025tree} 
+\begin{itemize}
+        \item[+] \alg{Preserves Poisson marginals} while introducing dependence;
+        \vfill
+        \item[+] Parameter count grows \alg{linearly with dimension} 
+        (not exponentially)
+        \vfill
+        \item[+] \alg{Computationally tractable} for large portfolios
+        \vfill
+        \item[+] \alg{Provides clear interpretation} of dependence structure
+        \vfill
+        \item[$-$] Allows for \alr{only one mean parameter} $\lambda$ for all $N_v, v \in \mathcal{V}$ 
+\end{itemize}
+\end{frame}
+\begin{frame}{Flexible Tree-structured MRFs with Poisson marginals}
     Let
     \begin{itemize}
             \item Tree $\mathcal{T} = (\mathcal{V}, \mathcal{E})$ with root $r \in \mathcal{V}$;
             \item Parameters: means $\boldsymbol{\lambda} = (\lambda_v)_{v \in \mathcal{V}}$ and dependencies $\boldsymbol{\alpha} = (\alpha_e)_{e \in \mathcal{E}}$;
             \item Constraint: $\alphav{v} \in [0, \min(\sqrt{{\lambda_{v}}/{\lambda_{\pa{v}}}}, \sqrt{{\lambda_{\pa{v}}}/{\lambda_{v}}})]$.
-            \item Recursive construction:
+    \end{itemize}
+\begin{theorem}
+Let $\boldsymbol{N}$ have the following recursive construction:
         \begin{equation*}
         N_v = 
         \begin{cases}
@@ -191,8 +200,10 @@ Assumptions about the random variables $X_i$:
         \end{equation*}
         where $\boldsymbol{L} = (L_v)_{v\in\mathcal{V}}$ are independent Poisson variables with $\lambda_{L_v} = \lambda_v- \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}$.
         
-        \item[$\Rightarrow$] $\boldsymbol{N} \sim \text{MPMRF}(\boldsymbol{\lambda}, \boldsymbol{\alpha}, \mathcal{T})$ with marginals $N_v \sim \text{Poisson}(\lambda_v)$.
-    \end{itemize}
+        Then $\boldsymbol{N} \sim \text{MPMRF}(\boldsymbol{\lambda}, \boldsymbol{\alpha}, \mathcal{T})$ with marginals $N_v \sim \text{Poisson}(\lambda_v)$.
+\end{theorem}
+    
+
 \end{frame}
 
 
@@ -252,6 +263,30 @@ Assumptions about the random variables $X_i$:
             %\label{fig:GrapheChaineMarkov}
         \end{example}
     \end{frame}
+
+
+\begin{frame}{Risk Sharing: Definition and Optimal Rule}
+
+    \begin{itemize}
+        \item \al{Fair risk sharing rule:} a function $h: \boldsymbol{X} \mapsto (h_{i,n}(S_n))_{i \in [n]}$ that allocates the total cost $S_n = \sum_{i=1}^n X_i$ among $n$ participants such that:
+        \begin{equation*}
+        \sum_{i=1}^n h_{i,n}(S_n) = S_n
+        \quad \text{and} \quad
+        \mathbb{E}[h_{i,n}(S_n)] = \mathbb{E}[X_i] \quad \text{(fairness)}.
+        \end{equation*}
+        \pause
+        \item \al{Optimal rule:} the conditional expectation
+        \begin{equation*}
+        h_{i,n}^{\star}(S_n) = \mathbb{E}[X_i \mid S_n]
+        \end{equation*}
+        minimizes the mean squared error:
+        \begin{equation*}
+        \mathbb{E}\left[(X_i - h(S_n))^2\right],
+        \end{equation*}
+        over all measurable functions $h(S_n)$.
+    \end{itemize}
+    \end{frame}
+
 
 \begin{frame}
     \frametitle{Individual Risk Models}
