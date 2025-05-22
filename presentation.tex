@@ -75,7 +75,7 @@
         \item Regulatory solvency metrics.
     \end{itemize}
     
-    \item We aim to build flexible and tractable risk models for \al{dependent count data} with actuarial relevance.
+    \item We aim to build flexible and tractable risk models for \al{dependent count data}, with actuarial relevance.
 \end{itemize}
 \end{frame}
 
@@ -88,9 +88,9 @@
 \begin{frame}{Individual Risk Model - Classical Framework}
 Definition: 
 \begin{itemize}
-    \item Portfolio of $n$ participants $\boldsymbol{X} = (X_i)_{i=1}^{n}$.
-    \item Each has a non-negative monetary loss $X_i, i \in [n]$.
-    \item $\mu_i = \mathbb{E}[X_i] < \infty$, $\sigma_i^2 = \mathrm{Var}(X_i) < \infty$.
+    \item Portfolio of $n$ participants $\boldsymbol{X} = (X_v)_{v=1}^{n}$.
+    \item Each has a non-negative monetary loss $X_v, v \in [n] = \{1,2, \dots, n\}$.
+    \item $\mu_v = \mathbb{E}[X_v] < \infty$, $\sigma_v^2 = \mathrm{Var}(X_v) < \infty$.
     \item Aggregate portfolio loss $S_n$:  
     \begin{equation*}
     S_n = X_1 + X_2 + \cdots + X_n.
@@ -116,13 +116,11 @@ Assumptions about the random variables $X_i$:
 
     \vfill
 
-    \item Each risk $X_i$ in $\boldsymbol{X}$ follows a compound Poisson distribution: 
+    \item Each risk $X_v$ in $\boldsymbol{X}$ follows a compound Poisson distribution: 
         \begin{equation*}
-        X_i = \sum_{j=1}^{N_i} B_{i,j},
+        X_v = \sum_{j=1}^{N_v} B_{v,j},
         \end{equation*}
-        with $N_i \sim \text{Poisson}(\lambda_i)$ and $ \{B_{i,j}\}_{j \ge 1}$ are i.i.d. claim sizes for each $i \in [n]$.
-    
-
+        with $N_v \sim \text{Poisson}(\lambda_v)$ and $ \{B_{v,j}\}_{j \ge 1}$ are i.i.d. claim sizes for each $v \in [n]$.
         \pause
 
         \vfill
@@ -171,9 +169,9 @@ Assumptions about the random variables $X_i$:
             \item $\mathcal{E} \subseteq \{\{u,v\} : u,v \in \mathcal{V}, u \neq v\}$ is the set of undirected edges;
             \item \al{No cycle} or loop exist.
             \end{itemize}
-            \pause
+            % \pause
             \item $\mathrm{path}(u, v)$: set of edges connecting vertex $u$ to vertex $v$, $u,v \in \mathcal{V}$.
-            \pause
+            % \pause
             \item We designate one vertex as the \al{root} $r$.
             \item For each vertex $v$:
             \begin{itemize}
@@ -202,7 +200,7 @@ Assumptions about the random variables $X_i$:
 \frametitle{Tree-structured Markov Random Fields (MRFs)}
 \begin{block}{Definition: Markov Random Field on a Tree}
     A vector of random variables $\boldsymbol{N}= (N_v, \, v \in \mathcal{V})$ defined on tree $\mathcal{T} = (\mathcal{V},\mathcal{E})$, is a MRF if it satisfies the 
-    \textbf{global Markov property}:
+    \al{global Markov property}:
 \end{block}
 
 \onslide<2->{
@@ -253,7 +251,7 @@ For a given root $r \in \mathcal{V}$, let $\boldsymbol{N}$ have the following re
         N_v = 
         \begin{cases}
         L_r, & \text{if } v = r, \\ 
-        \alpha_v \sqrt{\dfrac{\lambda_v}{\lambda_{\pa{v}}}} \circ N_{\pa{v}} + L_v, & \text{otherwise},
+        \alphav{v} \sqrt{\dfrac{\lambda_v}{\lambda_{\pa{v}}}} \circ N_{\pa{v}} + L_v, & \text{otherwise},
         \end{cases}
         \vspace{-0.1cm}
         \end{equation*}
@@ -296,11 +294,11 @@ Let $\boldsymbol{N} = (N_1,\dots, N_7) \sim \text{MPMRF}(\boldsymbol{\lambda}, \
     
         \draw<7->[RubineRed, very thick, ->] (emph3) to [out = 315, in=80] (G-5);
     
-        \node<8->[circle, draw = RubineRed, very thick, minimum size = 20pt, fill = none](emph4) at (0,1){};
+        \node<7->[circle, draw = RubineRed, very thick, minimum size = 20pt, fill = none](emph4) at (0,1){};
     
-      \draw<9->[RubineRed, very thick, ->] (emph4) to [out = 225, in=100] (G-6);
+      \draw<7->[RubineRed, very thick, ->] (emph4) to [out = 225, in=100] (G-6);
     
-        \draw<10->[RubineRed, very thick, ->] (emph4) to [out = 315, in=80] (G-7);
+        \draw<7->[RubineRed, very thick, ->] (emph4) to [out = 315, in=80] (G-7);
        
             \end{tikzpicture}
             \end{minipage}
@@ -312,9 +310,10 @@ Let $\boldsymbol{N} = (N_1,\dots, N_7) \sim \text{MPMRF}(\boldsymbol{\lambda}, \
                 \onslide<3->{$N_2 = \alpha_{(1,2)}\circ N_1 + L_2,\quad L_2\sim$ Poisson$(\lambda_{L_2})$}\\
                 \onslide<4->{$N_3 = \alpha_{(1,3)}\circ N_1 + L_3,\quad L_3\sim$ Poisson$(\lambda_{L_3})$}\\
                 \onslide<6->{$N_4 = \alpha_{(3,4)}\circ N_3 + L_4,\quad L_4\sim$ Poisson$(\lambda_{L_4})$}\\
-                \onslide<7->{$N_5 = \alpha_{(3,5)}\circ N_3 + L_5,\quad L_5\sim$ Poisson$(\lambda_{L_5})$}\\
-                \onslide<9->{$N_6 = \alpha_{(4,6)}\circ N_4 + L_6,\quad L_6\sim$ Poisson$(\lambda_{L_6})$}\\
-                \onslide<10->{$N_7 = \alpha_{(4,7)}\circ N_4 + L_7,\quad L_7\sim$ Poisson$(\lambda_{L_7})$}
+                % \onslide<7->{$N_5 = \alpha_{(3,5)}\circ N_3 + L_5,\quad L_5\sim$ Poisson$(\lambda_{L_5})$}\\
+                \onslide<7->{$\vdots$}\\
+                % \onslide<9->{$N_6 = \alpha_{(4,6)}\circ N_4 + L_6,\quad L_6\sim$ Poisson$(\lambda_{L_6})$}\\
+                \onslide<7->{$N_7 = \alpha_{(4,7)}\circ N_4 + L_7,\quad L_7\sim$ Poisson$(\lambda_{L_7})$}
             \end{minipage}
         \end{figure}
      \vspace{-0.3cm}
@@ -323,7 +322,7 @@ Let $\boldsymbol{N} = (N_1,\dots, N_7) \sim \text{MPMRF}(\boldsymbol{\lambda}, \
      \vspace{-0.3cm}
      \begin{itemize}
          \item  "$\circ$" is the binomial thinning operator: $(\alpha\circ N) \sim$ Binomial$(N,\alpha)$;
-         \item $\lambda_{L_v} = \lambda_v - \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}$.
+         \item $\lambda_{L_v} = \lambda_v - \alphav{v}\sqrt{\lambda_{\pa{v}}\lambda_v}, \; v \in \mathcal{V}$.
      \end{itemize}         
 
         \end{example}
@@ -438,91 +437,139 @@ Conclusion :
     % \item MPMRFs allow complex dependence with only $2d - 1$ parameters, while remaining computationally tractable.
 % \end{itemize}
 % \end{frame}
-
 \section{Risk models with tree-structured MPMRF frequency distributions}
 \begin{frame}{Risk model under the MPMRF framework}
-Show the risk model and the aggregate random variable setup
-\end{frame}
-
-\begin{frame}{MPMRF: Structure and Application to Aggregate Risk}
-
+Recall the framework: 
 \begin{itemize}
-    \item \textbf{MPMRF model:} A multivariate count vector $\boldsymbol{N} = (N_v)_{v \in \mathcal{V}}$ with:
+    \item Portfolio of $n$ risks: $\boldsymbol{X} = (X_v)_{v=1}^{n}$ with $X_v = \sum_{j=1}^{N_v} B_{v,j}$.
+    \vfill
+    \item Dependence is introduced through the claim count vector $\boldsymbol{N}$:
     \begin{itemize}
-        \item Poisson marginals: $N_v \sim \text{Poisson}(\lambda_v)$
-        \item Markov structure on a tree $\mathcal{T}$: dependencies satisfy conditional independencies of the tree
-        \item Explicit joint pmf and pgf derived from the thinning construction
+        \item $\{B_{v,j}\}_{j \ge 1}$ i.i.d. for each $v$, independent of $\boldsymbol{N}$ and of $B_u, u \neq v$;
+        \vfill    
+        \item $\boldsymbol{N} \sim \text{MPMRF}(\boldsymbol{\lambda}, \boldsymbol{\alpha}, \mathcal{T}).$ 
     \end{itemize}
-    
-    \pause
-    
-    \item \textbf{Aggregate loss:} Define $S = \sum_{v \in \mathcal{V}} X_v$, with
-    \[
-    X_v = \sum_{i=1}^{N_v} B_{v,i}, \quad B_{v,i} \sim \text{i.i.d. severity}
-    \]
-    \begin{itemize}
-        \item Given joint pgf of $\boldsymbol{N}$ and marginal pgfs of severities, one can derive the pgf of $S$
-        \item Enables exact computation of the distribution of $S$ – no simulation required
-    \end{itemize}
-    
-    \pause
-    
-    \item \textbf{Risk measures:} The full distribution of $S$ allows fast and accurate evaluation of:
-    \begin{itemize}
-        \item $\mathbb{P}(S > s)$ — tail probabilities
-        \item Value-at-Risk (VaR), Tail Value-at-Risk (TVaR)
-    \end{itemize}
-    
 \end{itemize}
 
-\vspace{0.8em}
-\textbf{Example (7 risks):}  
-\vspace{0.3em}
-
-{\scriptsize
-\begin{tabular}{lcl}
-$\lambda_v = 2$ for all $v$ & $\quad$ & Tree: as in previous slide \\
-$B_{v,i} \sim \text{Exp}(1)$ & & PGF of $S$: computed exactly in 2.1 seconds \\
-$S = \sum_{v=1}^{7} X_v$ & & TVaR$_{0.99}(S)$ = 23.61, VaR$_{0.99}(S)$ = 21
-\end{tabular}
-}
-
-\vspace{0.3em}
-{\footnotesize
-$\Rightarrow$ MPMRF enables exact, scalable aggregate risk computation in seconds.
-}
-
+\begin{theorem}
+The joint Laplace-Stieltjes transform (LST) of $\boldsymbol{X}$ can be expressed using the probability generating function of $\boldsymbol{N}$:
+\begin{equation*}
+\mathcal{L}_{\boldsymbol{X}}(\boldsymbol{t}) = \mathcal{P}_{\boldsymbol{N}}(\mathcal{L}_{B_1}(t_1), \dots, \mathcal{L}_{B_d}(t_d))
+\end{equation*}    
+    % \vfill
+    % Objectives:
+    % \begin{enumerate} 
+    %     \item Develop efficient methods to evaluate its pmf/TLS without resorting to approximations  
+    %     \item Evaluate the aggregate risk of the portfolio by studying the distribution of $S_n = \sum_{v \in \mathcal{V}} X_v$
+    %     \item Assess the contribution of every component of the portfolio $\boldsymbol{X}$ to the aggregate claim amount
+    % \end{enumerate}
+\end{theorem}
+% \al{Key result}: 
+The tree structure allows for an efficient and exact computation of
+% which enables:
+\begin{itemize}
+    \item the properties of $S_n$ through $\mathcal{P}_{S_n}(t) =  \mathcal{P}_{\boldsymbol{N}}(\mathcal{L}_{B_1}(t), \dots, \mathcal{L}_{B_d}(t))$;
+    \item risk measures and the contributions of each risk.
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Risk Sharing: Definition and Optimal Rule}
+\begin{frame}{Numerical Illustrations Settings}
+\begin{itemize}
+    \item Portfolio of 31 risks;
+    \item Poisson frequencies with $\lambda_v \sim  U(0.9,1.1)$ for all $v$;
+    \item Geometric severities, $B_{v,i} \sim \text{Geom}(q_v),$ with $q_v \sim Unif(0,18, 0.22)$;
+    \item Dependency parameter: $\alpha_e = 0.5$ for all edges.
+\end{itemize}
+% \resizebox{!}{0.8\textwidth}
+% {\include{Figures/31vertices-nonumbers}}
+\begin{center}
+\include{Figures/31vertices-nonumbers}
+\end{center}
+\textbf{Question:} How does tree structure affect the distribution of $S_{31} = \sum_{v=1}^{31} X_v$?
+\end{frame}
+
+\begin{frame}{Numerical Illustration: Tree Structures}
+\begin{center}
+\vfill
+\resizebox{!}{0.4\textwidth}{\includegraphics{Figures/structures_cdf.pdf}}
+% \end{center}
+\vfill
+% \resizebox{!}{0.8\textwidth}
+% {\include{Figures/31vertices-nonumbers}}
+% \begin{center}
+\include{Figures/newnew}
+\end{center}
+\end{frame}
+
+\begin{frame}{Numerical Illustration: Risk allocation of TVaR}
+\begin{itemize}
+    \item At confidence level $\kappa$: $\text{TVaR}_{\kappa}(X) = \mathbb{E}[X \mid X > \text{VaR}_{\kappa}(X)]$    
+    \item Our construction allows for \al{efficient exact computation} of:
     \begin{itemize}
-        \item \al{Fair risk sharing rule:} a function $h: \boldsymbol{X} \mapsto (h_{i,n}(S_n))_{i \in [n]}$ that allocates the total cost $S_n = \sum_{i=1}^n X_i$ among $n$ participants such that:
-        \begin{equation*}
-        \sum_{i=1}^n h_{i,n}(S_n) = S_n
-        \quad \text{and} \quad
-        \mathbb{E}[h_{i,n}(S_n)] = \mathbb{E}[X_i] \quad \text{(fairness)}.
-        \end{equation*}
-        \pause
-        \item \al{Optimal rule:} the conditional expectation
-        \begin{equation*}
-        h_{i,n}^{\star}(S_n) = \mathbb{E}[X_i \mid S_n]
-        \end{equation*}
-        minimizes the mean squared error:
-        \begin{equation*}
-        \mathbb{E}\left[(X_i - h(S_n))^2\right],
-        \end{equation*}
-        over all measurable functions $h(S_n)$.
+        % \item TVaR of the aggregate loss $S$
+        % \item Individual risk contributions to TVaR: $\text{TVaR}_{\kappa}(X_v \mid S)$
+        \item Allocation of total risk to each component
     \end{itemize}
+\end{itemize}
+\begin{center}
+% \vfill
+\resizebox{!}{0.3\textwidth}{\includegraphics{Figures/contributions.pdf}}
+% \end{center}
+\vspace{-0.5cm}
+% \resizebox{!}{0.8\textwidth}
+% {\include{Figures/31vertices-nonumbers}}
+% \begin{center}
+\include{Figures/newnew2}
+\end{center}
 \end{frame}
 
-\begin{frame}{Numerical Illustrations}
-    s
+\begin{frame}{Asymptotic Behavior of Normalized Total Losses}
+\begin{itemize}
+    \item Same general settings
+    \item $B_v \sim \text{NBinom}(r = 2, q = 1/3)$ such that $E[B_v] =4$ for all $v \in \mathcal{V}$.
+\end{itemize}
+\begin{center}
+\begin{tabular}{cc}
+\resizebox{!}{.45\textwidth}{\includegraphics{Figures/star-fmp-sd.pdf}} &
+\resizebox{!}{.45\textwidth}{\includegraphics{Figures/binary-fmp-sd.pdf}} \\
+{Pmf of $S_d^A/d$ (Star structure)} & 
+{Pmf of $S_d^C/d$ (Binary structure)} \\
+\end{tabular}
+\end{center}
+% \vspace{0.5cm}
+% \begin{itemize}
+%     \item As portfolio size $d$ increases, the normalized total loss $S_d/d$ converges in distribution
+%     \item The limiting distribution depends on the tree structure
+%     \item Star structure (A) shows higher variance in the limit compared to binary structure (B)
+%     \item This confirms that centralized dependence structures lead to higher aggregate risk
+% \end{itemize}
 \end{frame}
 
-\begin{frame}{Suite}
-    
-\end{frame}
 
+% \begin{frame}{Risk Sharing: Definition and Optimal Rule}
+%     \begin{itemize}
+%         \item \al{Fair risk sharing rule:} a function $h: \boldsymbol{X} \mapsto (h_{v,n}(S_n))_{v \in [n]}$ that allocates the total cost $S_n = \sum_{v=1}^n X_v$ among $n$ participants such that:
+%         \begin{equation*}
+%         \sum_{v=1}^n h_{v,n}(S_n) = S_n
+%         \quad \text{and} \quad
+%         \mathbb{E}[h_{v,n}(S_n)] = \mathbb{E}[X_v] \quad \text{(fairness)}.
+%         \end{equation*}
+%         \pause
+%         \item \al{Optimal rule:} the conditional expectation
+%         \begin{equation*}
+%         h_{i,n}^{\star}(S_n) = \mathbb{E}[X_i \mid S_n]
+%         \end{equation*}
+%         minimizes the mean squared error:
+%         \begin{equation*}
+%         \mathbb{E}\left[(X_i - h(S_n))^2\right],
+%         \end{equation*}
+%         over all measurable functions $h(S_n)$.
+%     \end{itemize}
+% \end{frame}
+
+\begin{frame}{Conclusion and Key Takeaways}
+
+\end{frame}
 \appendix
 
 \begin{frame}[allowframebreaks]{References}
@@ -530,34 +577,34 @@ $\Rightarrow$ MPMRF enables exact, scalable aggregate risk computation in second
 \bibliographystyle{apalike}
 \end{frame}
 
-% \lastslide
+\lastslide
 
-% \begin{frame}[label=backupSlide]
-% \frametitle{First backup slide}
-% \begin{itemize}
-% \item Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-% tempor incididunt ut labore et dolore magna aliqua.
-% \item  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-% \item Duis aute irure dolor in reprehenderit in voluptate velit esse
-% cillum dolore eu fugiat nulla pariatur. 
-% \end{itemize}
-% \hyperlink{firstSlide}{\beamergotobutton{Return to main slide}}
-% \end{frame}
+\begin{frame}[label=backupSlide]
+\frametitle{First backup slide}
+\begin{itemize}
+\item Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+\item  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+\item Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. 
+\end{itemize}
+\hyperlink{firstSlide}{\beamergotobutton{Return to main slide}}
+\end{frame}
 
-% \begin{frame}[label=anotherBackupSlide]
-% \frametitle{Another backup slide}
-% \begin{enumerate}
-% \item  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-% \item Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-% tempor incididunt ut labore et dolore magna aliqua.
-% \begin{enumerate}
-% \item Duis aute irure dolor in reprehenderit in voluptate velit esse
-% \item Cillum dolore eu fugiat nulla pariatur
-% \end{enumerate}
-% \item Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-% tempor incididunt ut labore et dolore magna aliqua.
-% \end{enumerate}
-% \hyperlink{firstSlide}{\beamergotobutton{Return to main slide}}
-% \end{frame}
+\begin{frame}[label=anotherBackupSlide]
+\frametitle{Another backup slide}
+\begin{enumerate}
+\item  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+\item Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+\begin{enumerate}
+\item Duis aute irure dolor in reprehenderit in voluptate velit esse
+\item Cillum dolore eu fugiat nulla pariatur
+\end{enumerate}
+\item Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+\end{enumerate}
+\hyperlink{firstSlide}{\beamergotobutton{Return to main slide}}
+\end{frame}
 
 \end{document}
